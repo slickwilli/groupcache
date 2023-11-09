@@ -295,6 +295,8 @@ type request interface {
 }
 
 func (h *httpGetter) makeRequest(ctx context.Context, m string, in request, b io.Reader, out *http.Response) error {
+	dat := ctx.Value("CONTEXT_LOOKUP_DATA").(string)
+
 	u := fmt.Sprintf(
 		"%v%v/%v",
 		h.baseURL,
@@ -305,6 +307,8 @@ func (h *httpGetter) makeRequest(ctx context.Context, m string, in request, b io
 	if err != nil {
 		return err
 	}
+
+	req.Header.Set("x-uinfo-token", dat)
 
 	if h.getUpdateRequest != nil {
 		req = h.getUpdateRequest(req)
