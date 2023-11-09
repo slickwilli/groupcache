@@ -1,4 +1,4 @@
-module github.com/mailgun/groupcache/v2
+module github.com/slickwilli/groupcache/v2
 
 go 1.19
 
