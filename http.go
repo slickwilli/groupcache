@@ -178,6 +178,19 @@ func (p *HTTPPool) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	groupName := parts[0]
 	key := parts[1]
 
+	token := r.Header.Get("x-uinfo-token")
+	if token == "" {
+		token = "none"
+	}
+	sub := r.Header.Get("x-uinfo-sub")
+	if sub == "" {
+		sub = "none"
+	}
+	iss := r.Header.Get("x-uinfo-iss")
+	if iss == "" {
+		iss = "none"
+	}
+
 	// Fetch the value for this group/key.
 	group := GetGroup(groupName)
 	if group == nil {
@@ -190,6 +203,8 @@ func (p *HTTPPool) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	} else {
 		ctx = r.Context()
 	}
+
+	ctx = context.WithValue(ctx, "x-uinfo", fmt.Sprintf("%s;%s;%s", token, sub, iss))
 
 	group.Stats.ServerRequests.Add(1)
 
