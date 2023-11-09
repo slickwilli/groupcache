@@ -32,10 +32,10 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/sirupsen/logrus"
 	pb "github.com/slickwilli/groupcache/v2/groupcachepb"
 	"github.com/slickwilli/groupcache/v2/lru"
 	"github.com/slickwilli/groupcache/v2/singleflight"
-	"github.com/sirupsen/logrus"
 )
 
 var logger Logger
@@ -398,13 +398,13 @@ func (g *Group) load(ctx context.Context, key string, dest Sink) (value ByteView
 				return nil, err
 			}
 
-			if errors.Is(err, &ErrNotFound{}) {
-				return nil, err
-			}
+			// if errors.Is(err, &ErrNotFound{}) {
+			// 	return nil, err
+			// }
 
-			if errors.Is(err, &ErrRemoteCall{}) {
-				return nil, err
-			}
+			// if errors.Is(err, &ErrRemoteCall{}) {
+			// 	return nil, err
+			// }
 
 			if logger != nil {
 				logger.Error().

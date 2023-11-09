@@ -178,19 +178,6 @@ func (p *HTTPPool) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	groupName := parts[0]
 	key := parts[1]
 
-	token := r.Header.Get("x-uinfo-token")
-	if token == "" {
-		token = "none"
-	}
-	sub := r.Header.Get("x-uinfo-sub")
-	if sub == "" {
-		sub = "none"
-	}
-	iss := r.Header.Get("x-uinfo-iss")
-	if iss == "" {
-		iss = "none"
-	}
-
 	// Fetch the value for this group/key.
 	group := GetGroup(groupName)
 	if group == nil {
@@ -203,8 +190,6 @@ func (p *HTTPPool) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	} else {
 		ctx = r.Context()
 	}
-
-	ctx = context.WithValue(ctx, "x-uinfo", fmt.Sprintf("%s;%s;%s", token, sub, iss))
 
 	group.Stats.ServerRequests.Add(1)
 
@@ -295,8 +280,6 @@ type request interface {
 }
 
 func (h *httpGetter) makeRequest(ctx context.Context, m string, in request, b io.Reader, out *http.Response) error {
-	dat := ctx.Value("CONTEXT_LOOKUP_DATA").(string)
-
 	u := fmt.Sprintf(
 		"%v%v/%v",
 		h.baseURL,
@@ -307,8 +290,6 @@ func (h *httpGetter) makeRequest(ctx context.Context, m string, in request, b io
 	if err != nil {
 		return err
 	}
-
-	req.Header.Set("x-uinfo-token", dat)
 
 	if h.getUpdateRequest != nil {
 		req = h.getUpdateRequest(req)
